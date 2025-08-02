@@ -138,6 +138,16 @@ app.delete("/products/:id", async (req, res) => {
 
 app.post("/orders", async (req, res) => {
   const { customer, order, items } = req.body;
+  const date = new Date(order.estimated_delivery + 'T00:00:00'); 
+  const startDate = new Date(date);
+  const endDate = new Date(date);
+  endDate.setDate(endDate.getDate() + 3);
+  const options = { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    };
+
 
   try {
     // 1. Insert or get existing customer by email
@@ -199,10 +209,11 @@ app.post("/orders", async (req, res) => {
       },
     });
 
+
      const orderSummaryHtml = `
       <h2>Order Confirmation</h2>
       <p>Order #: <strong>${order.order_number}</strong></p>
-      <p>Estimated Delivery: ${order.estimated_delivery}</p>
+      <p>Estimated Delivery: ${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}</p>
       <p>Subtotal: $${order.subtotal}</p>
       <p>Shipping Fee: $${order.shipping_cost}</p>
       <p>Total: $${order.total_amount}</p>
